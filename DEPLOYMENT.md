@@ -1,8 +1,12 @@
 # Domain setup: lanetforlaengesiden.dk
 
-Deployment workflow is prepared in `.github/workflows/pages.yml`. Deployment is not live yet: a target GitHub repository must be selected and Pages enabled with GitHub Actions as the publishing source.
+Repository: https://github.com/Dunkstormen/lanetforlaengesiden
 
-Once the repository exists, set its Pages custom domain to `lanetforlaengesiden.dk` before changing DNS.
+Site: https://lanetforlaengesiden.dk/
+
+The `.github/workflows/pages.yml` workflow deployed successfully. GitHub Pages uses GitHub Actions and has `lanetforlaengesiden.dk` configured as its custom domain. Future pushes to `main` automatically redeploy the website.
+
+Cloudflare website DNS records were updated in Benjamins Account on 10 October 2026. The four root A records and the www CNAME below are proxied through Cloudflare. The pre-existing wildcard record remains unchanged.
 
 The connected GitHub account is `Dunkstormen`. If this account owns the selected repository, configure these website records:
 
@@ -14,8 +18,10 @@ The connected GitHub account is `Dunkstormen`. If this account owns the selected
 | A | @ | 185.199.111.153 |
 | CNAME | www | Dunkstormen.github.io |
 
-The domain's A record currently resolves to `212.237.249.17` (checked 9 October 2026). Replace that website A record with the four records above when the GitHub Pages domain is configured. Preserve email-related MX/TXT records and unrelated subdomains. If an existing AAAA record points to another website host, adjust it too.
+The previous website A record was `212.237.249.17`. Some DNS caches still return that old address during propagation. Resolver 1.1.1.1 already returns Cloudflare nameservers (`audrey.ns.cloudflare.com` and `yoxall.ns.cloudflare.com`) and Cloudflare proxy addresses.
 
-After DNS checks pass and the certificate is provisioned, enable Enforce HTTPS. Verify both the apex and www domains load the site, and confirm assets and the packing checklist work.
+Verified deployment success and the packing checklist in the public GitHub Pages site before configuring its domain. HTTPS requests using the current Cloudflare IP with normal certificate validation return the correct LANet HTML (HTTP 200), and www redirects to the apex domain (HTTP 301). The local browser still reaches the old server through cached DNS and reports a certificate mismatch. Do not bypass that warning; wait for DNS propagation.
+
+Cloudflare's Always Use HTTPS redirect is enabled, and its Universal SSL certificate is active. GitHub's own custom-domain certificate check is still pending. Cloudflare already serves a valid edge certificate. Enable GitHub Enforce HTTPS when its certificate is available.
 
 Source: https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site
